@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Laudo de infiltracao, vistoria cautelar e autovistoria predial com camera termografica e ART. Eng. Civil Flavio Martins Ferreira, CREA/RJ 2013110583.">
+<meta name="author" content="Revilo Engenharia">
+<meta property="og:title" content="Revilo Engenharia">
+<meta property="og:description" content="Laudo de infiltracao, vistoria cautelar e autovistoria predial com camera termografica e ART. Eng. Civil Flavio Martins Ferreira, CREA/RJ 2013110583.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="img/og.jpg">
+<meta name="theme-color" content="#0e1419">
+<link rel="icon" type="image/png" sizes="256x256" href="img/icone.png">
+<link rel="apple-touch-icon" href="img/icone.png">
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Revilo Engenharia</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: coluna unica com faixas full-bleed; a escala termica (frio -> quente) e o sistema
+   que organiza cor, rails e estados. Tema unico escuro, do mundo da camera termografica. */
+:root{
+  color-scheme: dark;
+  --bg:#0e1419; --bg-2:#131c23; --surface:#18232b; --surface-2:#1f2d37;
+  --line:#2a3b47; --line-forte:#3b5160;
+  --fg:#e9eff3; --fg-dim:#9bb0bd; --fg-fraco:#6d8392;
+  --laranja:#d9913d; --laranja-claro:#f0b259; --arco:#1f282f;
+  --quente:#ff6a2b; --frio:#4aa3c7;
+  --display:"Archivo","Arial Narrow",Helvetica,sans-serif;
+  --corpo:"IBM Plex Sans",-apple-system,Segoe UI,Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --r:4px;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--corpo);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:var(--laranja-claro)}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.08;letter-spacing:-.015em}
+p{margin:0}
+.faixa{padding-block:clamp(56px,8vw,104px)}
+.cx{width:100%;max-width:1120px;margin-inline:auto;padding-inline:20px}
+.olho{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--laranja);display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.olho::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,var(--line-forte),transparent)}
+.tit{font-size:clamp(28px,4.4vw,42px);font-weight:800}
+.sub{color:var(--fg-dim);max-width:62ch;margin-top:14px;font-size:17px}
+
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+#termo{position:absolute;inset:0;width:100%;height:100%;opacity:.42}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(125% 100% at 16% 6%,rgba(14,20,25,.12) 0%,rgba(14,20,25,.74) 46%,var(--bg) 88%)}
+.hero .cx{position:relative;z-index:2;padding-block:clamp(44px,7vw,84px)}
+.marca{width:min(300px,62vw);margin-bottom:clamp(30px,5vw,46px)}
+.hero h1{font-size:clamp(34px,6.4vw,62px);font-weight:800;max-width:17ch}
+.hero h1 em{font-style:normal;color:var(--laranja-claro)}
+.hero .sub{font-size:clamp(16px,2.2vw,19px);max-width:52ch}
+.selos{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px}
+.selo{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--fg-dim);
+  border:1px solid var(--line-forte);border-radius:999px;padding:7px 13px;background:rgba(14,20,25,.55)}
+.acoes{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--display);font-weight:700;
+  font-size:15px;padding:14px 22px;border-radius:var(--r);text-decoration:none;border:1px solid transparent;
+  transition:transform .14s ease,background .14s ease,border-color .14s ease}
+.btn-zap{background:var(--laranja);color:#17110a}
+.btn-zap:hover{background:var(--laranja-claro);transform:translateY(-1px)}
+.btn-fant{border-color:var(--line-forte);color:var(--fg)}
+.btn-fant:hover{border-color:var(--laranja);color:var(--laranja-claro)}
+.btn svg{width:17px;height:17px;flex:none}
+
+/* ---------- escala ---------- */
+.escala{border-block:1px solid var(--line);background:var(--bg-2)}
+.escala .cx{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+  padding-inline:0;max-width:none}
+.esc-i{background:var(--bg-2);padding:26px clamp(20px,4vw,38px)}
+.esc-i b{font-family:var(--mono);font-size:12px;letter-spacing:.1em;display:block;margin-bottom:7px}
+.esc-i p{color:var(--fg-dim);font-size:14.5px;line-height:1.5}
+.esc-1 b{color:var(--frio)} .esc-2 b{color:var(--laranja)} .esc-3 b{color:var(--quente)}
+
+/* ---------- servicos ---------- */
+.grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);margin-top:38px}
+.srv{background:var(--surface);padding:28px 26px 26px;display:flex;flex-direction:column;min-width:0;
+  position:relative}
+.srv::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--rail,transparent)}
+.srv h3{font-size:19px;font-weight:700;margin-bottom:10px;padding-right:4px}
+.srv p{color:var(--fg-dim);font-size:14.5px;flex:1}
+.srv ul{margin:14px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.srv li{font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--fg-fraco);border:1px solid var(--line);border-radius:3px;padding:4px 7px}
+.preco{margin-top:20px;padding-top:16px;border-top:1px solid var(--line);
+  display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.preco small{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--fg-fraco)}
+.preco b{font-family:var(--display);font-size:25px;font-weight:800;color:var(--laranja-claro);
+  font-variant-numeric:tabular-nums}
+.preco.consulta b{font-size:17px;color:var(--fg-dim)}
+
+/* ---------- galeria ---------- */
+.filtros{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px}
+.fl{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+  background:transparent;color:var(--fg-dim);border:1px solid var(--line-forte);border-radius:999px;
+  padding:8px 15px;cursor:pointer;transition:background .14s ease,color .14s ease,border-color .14s ease}
+.fl:hover{color:var(--fg);border-color:var(--fg-fraco)}
+.fl[aria-pressed="true"]{background:var(--laranja);border-color:var(--laranja);color:#17110a}
+.fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:12px;margin-top:22px}
+.foto{position:relative;border:1px solid var(--line);background:var(--surface);overflow:hidden;
+  cursor:zoom-in;padding:0;text-align:left;color:inherit;font:inherit;display:block;width:100%}
+.foto img{aspect-ratio:4/3;object-fit:cover;width:100%;
+  transition:transform .4s cubic-bezier(.2,.7,.3,1),filter .3s ease;filter:saturate(.88)}
+.foto:hover img,.foto:focus-visible img{transform:scale(1.045);filter:saturate(1.05)}
+.foto figcaption{padding:13px 14px 15px;font-size:13.5px;color:var(--fg-dim);line-height:1.45;
+  border-top:1px solid var(--line)}
+.foto .tag{position:absolute;top:9px;left:9px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.09em;text-transform:uppercase;background:rgba(14,20,25,.85);color:var(--laranja-claro);
+  border:1px solid var(--line-forte);border-radius:3px;padding:4px 8px;z-index:2}
+.foto .ilu{left:auto;right:9px;color:var(--fg-fraco);background:rgba(14,20,25,.9)}
+.nota{margin-top:20px;font-size:13px;color:var(--fg-fraco);max-width:72ch}
+
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:50;background:rgba(8,11,14,.95);display:flex;align-items:center;
+  justify-content:center;padding:20px;flex-direction:column;gap:14px}
+.lb img{max-width:min(1000px,92vw);max-height:74vh;object-fit:contain;border:1px solid var(--line-forte)}
+.lb p{color:var(--fg-dim);font-size:14px;max-width:62ch;text-align:center}
+.lb button{position:absolute;top:14px;right:14px;background:var(--surface);color:var(--fg);
+  border:1px solid var(--line-forte);border-radius:var(--r);padding:9px 14px;cursor:pointer;
+  font-family:var(--mono);font-size:12px}
+
+/* ---------- processo ---------- */
+.passos{counter-reset:p;margin-top:38px;display:grid;gap:1px;background:var(--line);
+  border:1px solid var(--line)}
+.passo{background:var(--surface);padding:24px 26px;display:grid;grid-template-columns:auto 1fr;
+  gap:20px;align-items:start}
+.passo::before{counter-increment:p;content:counter(p,decimal-leading-zero);font-family:var(--mono);
+  font-size:12px;color:var(--laranja);letter-spacing:.08em;padding-top:4px}
+.passo h3{font-size:17px;font-weight:700;margin-bottom:5px}
+.passo p{color:var(--fg-dim);font-size:14.5px}
+
+/* ---------- equipamento ---------- */
+.equipa{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:26px;margin-top:36px}
+.eq{border-left:2px solid var(--laranja);padding-left:20px;min-width:0}
+.eq b{font-family:var(--display);font-size:16px;display:block;margin-bottom:6px}
+.eq p{color:var(--fg-dim);font-size:14.5px}
+.eq .dado{font-family:var(--mono);font-size:12.5px;color:var(--laranja-claro);margin-top:8px;
+  font-variant-numeric:tabular-nums}
+
+/* ---------- contato ---------- */
+.contato{background:var(--bg-2);border-block:1px solid var(--line)}
+.ct-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,60px);align-items:start}
+.linha{display:flex;align-items:center;gap:12px;padding:15px 0;border-bottom:1px solid var(--line);
+  flex-wrap:wrap;min-width:0}
+.linha .rot{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--fg-fraco);width:92px;flex:none}
+.linha .val{font-family:var(--mono);font-size:14.5px;color:var(--fg);word-break:break-word;min-width:0;flex:1}
+.cop{background:transparent;border:1px solid var(--line-forte);color:var(--fg-dim);border-radius:3px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;padding:5px 9px;cursor:pointer;flex:none}
+.cop:hover{color:var(--laranja-claro);border-color:var(--laranja)}
+
+footer{padding-block:40px;font-size:13px;color:var(--fg-fraco)}
+footer .cx{display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:flex-end}
+footer img{width:130px;opacity:.72}
+.cred{font-size:11.5px;line-height:1.8;max-width:68ch;min-width:0}
+.cred a{color:var(--fg-fraco);text-decoration:underline;text-underline-offset:2px}
+.cred a:hover{color:var(--laranja-claro)}
+
+:focus-visible{outline:2px solid var(--laranja);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:760px){
+  .escala .cx{grid-template-columns:1fr}
+  .ct-grid{grid-template-columns:1fr}
+  .passo{grid-template-columns:1fr;gap:6px}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <canvas id="termo" aria-hidden="true"></canvas>
+  <div class="cx">
+    <img class="marca" src="img/revilo-branco.png" alt="Revilo Engenharia" width="1200" height="458">
+    <h1>Diagnóstico de infiltração, trinca e laudo com <em>ART</em></h1>
+    <p class="sub">Vistoria com câmera termográfica e medidor de umidade. O relatório sai com a foto
+      térmica, a causa e o que precisa ser feito. Engenheiro civil responsável, CREA/RJ 2013110583.</p>
+    <div class="selos">
+      <span class="selo">Sem quebrar parede</span>
+      <span class="selo">ART registrada no CREA</span>
+      <span class="selo">Relatório em PDF</span>
+    </div>
+    <div class="acoes">
+      <a class="btn btn-zap" href="https://wa.me/5521982953288?text=Ol%C3%A1%2C%20vim%20pelo%20site%20da%20Revilo%20e%20preciso%20de%20uma%20vistoria." target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.8-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15l-1.3 4.8 5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>
+        Chamar no WhatsApp</a>
+      <a class="btn btn-fant" href="#servicos">Ver serviços e valores</a>
+    </div>
+  </div>
+</header>
+
+<section class="escala" aria-label="Como a leitura térmica funciona">
+  <div class="cx">
+    <div class="esc-i esc-1"><b>FRIO</b><p>Área úmida evapora e esfria. Na imagem térmica vira um borrão
+      escuro, com a pintura ainda inteira por cima.</p></div>
+    <div class="esc-i esc-2"><b>NORMAL</b><p>A referência é a parede seca do lado.</p></div>
+    <div class="esc-i esc-3"><b>QUENTE</b><p>Conexão frouxa esquenta muito antes de queimar. Em quadro de
+      energia é isso que a inspeção procura, com o circuito ligado, porque desligado não aparece
+      nada.</p></div>
+  </div>
+</section>
+
+<section class="faixa" id="servicos">
+  <div class="cx">
+    <p class="olho">Serviços</p>
+    <h2 class="tit">Serviços e valores</h2>
+    <p class="sub">Valores de referência. O preço fecha depois da conversa, conforme a área, o
+      deslocamento e a necessidade de ART.</p>
+
+    <div class="grade">
+      <article class="srv" style="--rail:var(--frio)">
+        <h3>Diagnóstico de infiltração e mofo</h3>
+        <p>Visita técnica com câmera termográfica e medidor de umidade para achar a origem da água antes
+          de quebrar parede. Sai com relatório fotográfico térmico e a indicação do reparo.</p>
+        <ul><li>Apartamento até 80 m²</li><li>Relatório em PDF</li><li>Sem quebra</li></ul>
+        <div class="preco"><small>a partir de</small><b>R$ 450</b></div>
+      </article>
+
+      <article class="srv" style="--rail:var(--laranja)">
+        <h3>Laudo de infiltração com ART</h3>
+        <p>Para apresentar a condomínio, vizinho, síndico ou seguradora. Documento técnico com causa,
+          extensão, responsabilidade e Anotação de Responsabilidade Técnica registrada no CREA.</p>
+        <ul><li>ART registrada</li><li>Uso em processo</li><li>Defesa em condomínio</li></ul>
+        <div class="preco"><small>a partir de</small><b>R$ 1.200</b></div>
+      </article>
+
+      <article class="srv" style="--rail:var(--quente)">
+        <h3>Termografia de quadros elétricos</h3>
+        <p>Inspeção termográfica de até 6 quadros com o sistema em carga, apontando conexão frouxa,
+          desequilíbrio de fase e componente sobreaquecido. Relatório com imagem térmica de cada ponto.</p>
+        <ul><li>Até 6 quadros</li><li>Com ART a partir de R$ 1.800</li><li>Preventiva</li></ul>
+        <div class="preco"><small>a partir de</small><b>R$ 1.200</b></div>
+      </article>
+
+      <article class="srv" style="--rail:var(--laranja)">
+        <h3>Vistoria cautelar de vizinhança</h3>
+        <p>Registro do estado dos imóveis vizinhos antes de a obra começar, conforme a NBR 13752. Foto
+          com data e localização, medição das aberturas que já existem e repetição do levantamento no
+          final da obra, para comparar.</p>
+        <ul><li>NBR 13752</li><li>Foto com data e GPS</li><li>Antes e depois</li></ul>
+        <div class="preco consulta"><small>valor</small><b>sob consulta</b></div>
+      </article>
+
+      <article class="srv" style="--rail:var(--frio)">
+        <h3>Responsabilidade técnica por reforma</h3>
+        <p>Plano de reforma na NBR 16280, que o síndico exige antes de liberar obra em apartamento.</p>
+        <ul><li>NBR 16280</li><li>Aprovação em condomínio</li><li>ART de projeto</li></ul>
+        <div class="preco consulta"><small>valor</small><b>sob consulta</b></div>
+      </article>
+
+      <article class="srv" style="--rail:var(--laranja)">
+        <h3>Vistoria de recebimento e pós-obra</h3>
+        <p>Conferência do imóvel na entrega das chaves e no fim do prazo de garantia, item por item,
+          com a lista de pendências que a construtora tem que resolver.</p>
+        <ul><li>Entrega de chaves</li><li>Punch list</li><li>Garantia</li></ul>
+        <div class="preco consulta"><small>valor</small><b>sob consulta</b></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="faixa" id="galeria" style="background:var(--bg-2);border-block:1px solid var(--line)">
+  <div class="cx">
+    <p class="olho">Galeria</p>
+    <h2 class="tit">Fotos de vistoria e laudo</h2>
+    <p class="sub">Filtre pelo serviço. Clique na foto para ver inteira.</p>
+
+    <div class="filtros" id="filtros" role="group" aria-label="Filtrar galeria por serviço">
+      <button class="fl" type="button" data-f="todos" aria-pressed="true">Todos</button>
+      <button class="fl" type="button" data-f="infiltracao" aria-pressed="false">Infiltração</button>
+      <button class="fl" type="button" data-f="cautelar" aria-pressed="false">Vistoria cautelar</button>
+      <button class="fl" type="button" data-f="termografia" aria-pressed="false">Termografia</button>
+      <button class="fl" type="button" data-f="eletrica" aria-pressed="false">Elétrica</button>
+      <button class="fl" type="button" data-f="obra" aria-pressed="false">Obra e entrega</button>
+    </div>
+
+    <div class="fotos" id="fotos"></div>
+    <div style="display:flex;justify-content:center;margin-top:24px">
+      <button class="btn btn-fant" type="button" id="maisfotos"></button>
+    </div>
+    <p class="nota">As fotos sem marcação são registros de vistorias e laudos da Revilo, com o
+      endereço do imóvel preservado. As marcadas como ilustrativas vêm de bancos de licença livre,
+      com crédito e licença no rodapé.</p>
+  </div>
+</section>
+
+<section class="faixa">
+  <div class="cx">
+    <p class="olho">Como funciona</p>
+    <h2 class="tit">Da primeira mensagem ao laudo</h2>
+    <div class="passos">
+      <div class="passo"><div><h3>Você manda a foto e o endereço</h3>
+        <p>Com a foto do problema já dá para dizer se o caso pede termografia, se resolve com inspeção
+          simples e se vale ou não emitir ART. Essa conversa não é cobrada.</p></div></div>
+      <div class="passo"><div><h3>Visita técnica</h3>
+        <p>Varredura térmica dos ambientes afetados e dos vizinhos de parede, medição de umidade na
+          alvenaria e registro fotográfico. Em geral de uma a duas horas no local.</p></div></div>
+      <div class="passo"><div><h3>Relatório</h3>
+        <p>Imagem térmica e foto comum lado a lado, causa provável, extensão do dano e o que precisa ser
+          feito, na ordem. Entregue em PDF.</p></div></div>
+      <div class="passo"><div><h3>ART quando o caso exige</h3>
+        <p>Se o documento vai para condomínio, seguradora ou processo, sai com Anotação de
+          Responsabilidade Técnica registrada no CREA, com nome e número de quem assina.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="faixa" style="background:var(--bg-2);border-block:1px solid var(--line)">
+  <div class="cx">
+    <p class="olho">Método</p>
+    <h2 class="tit">Equipamento usado na vistoria</h2>
+    <div class="equipa">
+      <div class="eq"><b>Câmera termográfica</b>
+        <p>Hikmicro Mini2 V2. Lê a temperatura de superfície e mostra a área fria da evaporação ou o
+          ponto quente da conexão elétrica sem encostar na parede.</p>
+        <p class="dado">Sensor 256 &#215; 192 px</p></div>
+      <div class="eq"><b>Medidor de umidade</b>
+        <p>Medição sem pino, por indução. Confirma se a mancha térmica é água mesmo ou só diferença de
+          material, sem furar o acabamento.</p>
+        <p class="dado">Sem furo, sem marca</p></div>
+      <div class="eq"><b>Responsabilidade técnica</b>
+        <p>Caça-vazamento localiza o ponto e para por aí. O laudo de engenheiro diz a causa, quem
+          responde e o que fazer, e vale como documento técnico em condomínio, seguradora e
+          processo.</p>
+        <p class="dado">CREA/RJ 2013110583</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="faixa contato" id="contato">
+  <div class="cx ct-grid">
+    <div>
+      <p class="olho">Contato</p>
+      <h2 class="tit">Pedir orçamento</h2>
+      <p class="sub">A primeira conversa é por WhatsApp e não custa nada. Manda a foto do problema e o
+        endereço. Se não for caso de vistoria, você vai saber na hora.</p>
+      <div class="acoes">
+        <a class="btn btn-zap" href="https://wa.me/5521982953288?text=Ol%C3%A1%2C%20vim%20pelo%20site%20da%20Revilo%20e%20preciso%20de%20uma%20vistoria." target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.8-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15l-1.3 4.8 5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>
+          (21) 98295-3288</a>
+      </div>
+    </div>
+    <div>
+      <div class="linha"><span class="rot">WhatsApp</span><span class="val" id="v-tel">(21) 98295-3288</span>
+        <button class="cop" type="button" data-copia="v-tel">copiar</button></div>
+      <div class="linha"><span class="rot">E-mail</span><span class="val" id="v-mail">reviloengenharia@gmail.com</span>
+        <button class="cop" type="button" data-copia="v-mail">copiar</button></div>
+      <div class="linha"><span class="rot">Responsável</span><span class="val">Eng. Civil Flávio Martins Ferreira</span></div>
+      <div class="linha"><span class="rot">CREA</span><span class="val" id="v-crea">CREA/RJ 2013110583</span>
+        <button class="cop" type="button" data-copia="v-crea">copiar</button></div>
+      <div class="linha"><span class="rot">CNPJ</span><span class="val" id="v-cnpj">45.627.365/0001-89</span>
+        <button class="cop" type="button" data-copia="v-cnpj">copiar</button></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="cx">
+    <div>
+      <img src="img/revilo-branco.png" alt="Revilo Engenharia" width="1200" height="458">
+      <p style="margin-top:14px">Engenharia Civil · Vistorias, Perícias e Laudos Técnicos</p>
+    </div>
+    <p class="cred" id="cred"></p>
+  </div>
+</footer>
+
+<script>
+/* ---------- campo termico do hero ---------- */
+(function(){
+  var cv=document.getElementById('termo'); if(!cv) return;
+  var ctx=cv.getContext('2d'); if(!ctx) return;
+  var P=[[6,8,28],[42,16,96],[122,28,120],[196,52,86],[238,110,32],[244,176,48],[250,232,170]];
+  function cor(t){
+    t=Math.max(0,Math.min(1,t))*(P.length-1);
+    var i=Math.floor(t),f=t-i,a=P[i],b=P[Math.min(P.length-1,i+1)];
+    return [a[0]+(b[0]-a[0])*f, a[1]+(b[1]-a[1])*f, a[2]+(b[2]-a[2])*f];
+  }
+  var F=[[.12,.22,.30,1.00],[.30,.72,.26,.78],[.58,.34,.22,.62],[.82,.66,.30,.92],
+         [.68,.12,.18,.52],[.95,.30,.24,.70],[.44,.90,.20,.46],[.04,.86,.22,.58]];
+  function pinta(){
+    var cw=cv.clientWidth||1200, ch=cv.clientHeight||420;
+    var W=96, H=Math.max(40,Math.round(96*ch/cw));
+    var off=document.createElement('canvas'); off.width=W; off.height=H;
+    var oc=off.getContext('2d'); if(!oc) return;
+    var im=oc.createImageData(W,H), d=im.data;
+    for(var y=0;y<H;y++){ for(var x=0;x<W;x++){
+      var u=x/W, v=y/H, s=.06+.14*(1-v);
+      for(var k=0;k<F.length;k++){
+        var dx=u-F[k][0], dy=(v-F[k][1])*.78, r=F[k][2];
+        s+=F[k][3]*Math.exp(-(dx*dx+dy*dy)/(r*r*.5));
+      }
+      s+=.05*Math.sin(u*11+v*7)+.035*Math.sin(u*23-v*17);
+      var c=cor(s*.62), p=(y*W+x)*4;
+      d[p]=c[0]; d[p+1]=c[1]; d[p+2]=c[2]; d[p+3]=255;
+    }}
+    oc.putImageData(im,0,0);
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    cv.width=Math.max(1,Math.round(cw*dpr));
+    cv.height=Math.max(1,Math.round(ch*dpr));
+    ctx.imageSmoothingEnabled=true;
+    try{ ctx.imageSmoothingQuality='high'; }catch(e){}
+    ctx.clearRect(0,0,cv.width,cv.height);
+    ctx.drawImage(off,0,0,cv.width,cv.height);
+  }
+  pinta();
+  var t; window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(pinta,180);});
+})();
+
+/* ---------- galeria ---------- */
+var FOTOS=[
+ {f:"rv-fachada-cautelar",g:["cautelar"],t:"Vistoria cautelar",
+  l:"Registro de fachada na vistoria cautelar, com data e hora carimbadas na própria foto."},
+ {f:"rv-parede-aberta",g:["infiltracao"],t:"Infiltração",
+  l:"Parede aberta no ponto que o diagnóstico apontou. A tubulação estava exatamente ali."},
+ {f:"bc-termograma-escala",g:["termografia"],t:"Termografia",ilu:1,
+  l:"Termograma com escala de temperatura e pontos medidos. É esse par de números que vai para o laudo."},
+ {f:"rv-quadro-disjuntores",g:["eletrica"],t:"Elétrica",
+  l:"Quadro de distribuição com barramento e disjuntores em DIN, pronto para inspeção térmica."},
+ {f:"rv-marcacao-relatorio",g:["infiltracao"],t:"Relatório",
+  l:"Assim a análise chega até você: o ponto circulado na foto, com data e setor no carimbo."},
+ {f:"rv-armadura-exposta",g:["infiltracao"],t:"Patologia",
+  l:"Armadura exposta e corroída. A água chegou no aço e a seção já perdeu espessura."},
+ {f:"rv-obra-antes",g:["obra"],t:"Antes",
+  l:"Pavimento no osso, depois da demolição: estrutura à vista e nenhum acabamento."},
+ {f:"rv-obra-depois",g:["obra"],t:"Depois",
+  l:"O mesmo pavimento entregue e operando. Entre as duas fotos está o acompanhamento de obra."},
+ {f:"rv-mofo-banheiro",g:["infiltracao"],t:"Mofo",
+  l:"Bolor tomando a parede do banheiro. Aqui o problema já passou de estético e virou saúde."},
+ {f:"rv-medidor-laser",g:["cautelar"],t:"Medição",
+  l:"Medição a laser em campo. Cada distância registrada entra no laudo junto com a foto."},
+ {f:"bc-termograma-ironbow",g:["termografia"],t:"Termografia",ilu:1,
+  l:"Fachada na paleta quente. Cada tom é uma temperatura, e a diferença entre eles denuncia a falha."},
+ {f:"rv-umidade-escada",g:["infiltracao"],t:"Infiltração",
+  l:"Umidade descendo pela parede ao lado da escada, com bolor já instalado na junta."},
+ {f:"rv-tubulacao-embutida",g:["infiltracao"],t:"Infiltração",
+  l:"Tubulação embutida exposta, com o reboco em volta saturado de água."},
+ {f:"rv-sala-tecnica",g:["eletrica"],t:"Elétrica",
+  l:"Painéis da sala técnica. Em quadro desse porte, a inspeção térmica é rotina de manutenção."},
+ {f:"rv-reboco-solto",g:["cautelar"],t:"Vistoria cautelar",
+  l:"Destacamento de reboco com vegetação instalada na junta. Anomalia em atividade, não estabilizada."},
+ {f:"rv-viga-infiltracao",g:["infiltracao"],t:"Patologia",
+  l:"Viga com mancha escura em toda a face inferior. A água vem de cima e sai por ali."},
+ {f:"quadro-queimado",g:["eletrica"],t:"Elétrica",ilu:1,
+  l:"Marca de sobreaquecimento no quadro. A termografia enxerga esse ponto antes do curto."},
+ {f:"rv-bolha-pintura",g:["infiltracao"],t:"Infiltração",
+  l:"A pintura descola antes de a mancha escurecer. Esse é o primeiro aviso, e o mais barato de tratar."},
+ {f:"rv-trinca-platibanda",g:["cautelar"],t:"Vistoria cautelar",
+  l:"Trinca no encontro da platibanda com a laje, registrada antes de a obra vizinha começar."},
+ {f:"rv-laje-infiltracao",g:["infiltracao"],t:"Patologia",
+  l:"Laje nervurada com infiltração acompanhando a nervura, já com efloréscência."},
+ {f:"rv-laje-armadura",g:["infiltracao"],t:"Patologia",
+  l:"Laje vista por baixo, com o cobrimento perdido e o aço à mostra ao lado da luminária."},
+ {f:"rv-quadro-obra",g:["eletrica"],t:"Elétrica",
+  l:"Quadro aberto durante a obra, com os circuitos identificados antes do fechamento."},
+ {f:"rv-muro-descascado",g:["cautelar"],t:"Vistoria cautelar",
+  l:"Muro lateral com reboco pulverulento em toda a faixa inferior, registrado antes da obra."},
+ {f:"rv-concreto-aparente",g:["obra"],t:"Estrutura",
+  l:"Estrutura exposta após a remoção do revestimento. É a hora de ver o que o projeto não mostrava."},
+ {f:"rv-mancha-umidade",g:["infiltracao"],t:"Infiltração",
+  l:"Mancha de umidade avançando na parede interna, já com o reboco pulverulento."},
+ {f:"rv-parede-escavacao",g:["obra"],t:"Obra",
+  l:"Abertura de parede para chegar na tubulação. Trabalho feito no ponto, não no chute."},
+ {f:"rv-testemunho-papel",g:["infiltracao"],t:"Ensaio",
+  l:"Papel aplicado sobre o reboco para acompanhar o avanço da umidade entre uma visita e outra."},
+ {f:"rv-fissuras-mapeadas",g:["cautelar"],t:"Vistoria cautelar",
+  l:"Fissuras mapeadas na base da parede, no padrão típico de umidade ascendente."},
+ {f:"termografia-fachada",g:["termografia"],t:"Termografia",ilu:1,
+  l:"Imagem térmica sobreposta à fachada. É assim que a câmera entrega o que o olho não vê."},
+ {f:"rv-concreto-deteriorado",g:["infiltracao"],t:"Patologia",
+  l:"Desplacamento do concreto na borda da laje, com o cobrimento já perdido."},
+ {f:"rv-demolicao",g:["obra"],t:"Obra",
+  l:"Entulho de demolição antes da retirada. O plano de reforma começa por aqui."},
+ {f:"rv-mancha-inicio",g:["infiltracao"],t:"Infiltração",
+  l:"Começo da mancha, ainda pequena. Documentar nessa fase é o que permite comparar depois."},
+ {f:"rv-craquele",g:["cautelar"],t:"Vistoria cautelar",
+  l:"Fissura fina na marquise. Sem registro anterior, isso depois vira discussão de quem causou."},
+ {f:"rv-forro-instalacoes",g:["obra"],t:"Obra",
+  l:"Forro removido, instalações à vista. Momento certo de conferir o que vai ficar escondido."},
+ {f:"rv-mancha-evolucao",g:["infiltracao"],t:"Infiltração",
+  l:"A mesma parede meses depois. A mancha cresceu e o destacamento acompanhou."},
+ {f:"rv-destacamento",g:["cautelar","infiltracao"],t:"Vistoria cautelar",
+  l:"Reboco solto e mancha de umidade no muro lateral, com a data do registro na foto."},
+ {f:"medidor-umidade",g:["termografia","infiltracao"],t:"Medição",ilu:1,
+  l:"Medidor de umidade confirmando a leitura térmica, sem furar a parede."},
+ {f:"rv-gas-corredor",g:["obra"],t:"Entrega",
+  l:"Rede de gás sinalizada e corredor liberado. Detalhe que a vistoria de recebimento confere."},
+ {f:"rv-entorno-laje",g:["cautelar"],t:"Vistoria cautelar",
+  l:"Entorno e instalações na laje, registrados no mesmo levantamento. O laudo cobre o conjunto."},
+ {f:"termograma-predio",g:["termografia"],t:"Termografia",ilu:1,
+  l:"Termograma de edificação. A escala quente mostra por onde o calor, e a água, caminham."}
+];
+var LIMITE=12;
+(function(){
+  var alvo=document.getElementById('fotos');
+  function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+  FOTOS.forEach(function(x){
+    var b=document.createElement('button');
+    b.className='foto'; b.type='button'; b.dataset.g=x.g.join(' ');
+    b.innerHTML='<span class="tag">'+esc(x.t)+'</span>'+
+      (x.ilu?'<span class="tag ilu">ilustrativa</span>':'')+
+      '<img src="img/'+x.f+'.jpg" alt="'+esc(x.l)+
+      '" loading="lazy" width="1000" height="750"><figcaption>'+esc(x.l)+'</figcaption>';
+    b.addEventListener('click',function(){ abre(x); });
+    alvo.appendChild(b);
+  });
+  var filtro='todos', aberto=false, mais=document.getElementById('maisfotos');
+  function aplica(){
+    var cards=alvo.querySelectorAll('.foto'), casam=0, mostrados=0;
+    for(var j=0;j<cards.length;j++){
+      var ok = filtro==='todos' || cards[j].dataset.g.split(' ').indexOf(filtro)>=0;
+      if(ok) casam++;
+      var cabe = ok && (aberto || mostrados<LIMITE);
+      if(cabe) mostrados++;
+      cards[j].hidden = !cabe;
+    }
+    if(casam>LIMITE){
+      mais.hidden=false;
+      mais.textContent = aberto ? 'Mostrar menos' : 'Ver as outras '+(casam-LIMITE)+' fotos';
+    } else { mais.hidden=true; }
+  }
+  mais.addEventListener('click',function(){ aberto=!aberto; aplica();
+    if(!aberto) document.getElementById('galeria').scrollIntoView({block:'start'}); });
+  document.getElementById('filtros').addEventListener('click',function(e){
+    var b=e.target.closest('.fl'); if(!b) return;
+    var botoes=this.querySelectorAll('.fl');
+    for(var i=0;i<botoes.length;i++) botoes[i].setAttribute('aria-pressed', botoes[i]===b?'true':'false');
+    filtro=b.dataset.f; aberto=false; aplica();
+  });
+  aplica();
+  var lb=null, antes=null;
+  function tecla(e){ if(e.key==='Escape') fecha(); }
+  function fecha(){
+    if(lb){ lb.remove(); lb=null; }
+    document.removeEventListener('keydown',tecla);
+    if(antes){ antes.focus(); antes=null; }
+  }
+  function abre(x){
+    var foco=document.activeElement; fecha(); antes=foco;
+    lb=document.createElement('div'); lb.className='lb';
+    lb.setAttribute('role','dialog'); lb.setAttribute('aria-modal','true');
+    lb.setAttribute('aria-label',x.l);
+    lb.innerHTML='<button type="button">fechar &nbsp;ESC</button><img src="img/'+x.f+'.jpg" alt="'+
+      esc(x.l)+'"><p>'+esc(x.l)+'</p>';
+    lb.addEventListener('click',function(e){
+      if(e.target===lb || e.target.tagName==='BUTTON') fecha();
+    });
+    document.body.appendChild(lb);
+    document.addEventListener('keydown',tecla);
+    lb.querySelector('button').focus();
+  }
+})();
+
+/* ---------- creditos ---------- */
+var CRED=[
+ ["Thibault LEMONNIER","CC BY 4.0"],
+ ["Daniel Ramirez","CC BY 2.0"],
+ ["Mihai-Cosmin Pascariu","CC BY-SA 4.0"],
+ ["Etan J. Tal","CC BY-SA 4.0"],
+ ["Victor zmey","CC BY-SA 3.0"]
+ ];
+(function(){
+  var p=document.getElementById('cred');
+  var ilu=FOTOS.filter(function(x){ return x.ilu; }).length;
+  var partes=CRED.map(function(c){ return c[0]+' ('+c[1]+')'; });
+  p.textContent='As '+ilu+' imagens marcadas como ilustrativas são do Wikimedia Commons, de '+
+    partes.join(', ')+'. As outras '+(FOTOS.length-ilu)+' fotos são registros de vistorias e '+
+    'laudos da Revilo Engenharia.';
+})();
+
+/* ---------- copiar ---------- */
+document.addEventListener('click',function(e){
+  var b=e.target.closest('.cop'); if(!b) return;
+  var el=document.getElementById(b.dataset.copia); if(!el) return;
+  var txt=el.textContent.trim(), rot=b.textContent;
+  function feito(msg){ b.textContent=msg; setTimeout(function(){ b.textContent=rot; },1700); }
+  function selecionar(){
+    try{
+      var r=document.createRange(); r.selectNodeContents(el);
+      var s=window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      feito('selecionado');
+    }catch(err){ feito('selecione'); }
+  }
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){ feito('copiado'); }, selecionar);
+    } else { selecionar(); }
+  }catch(err){ selecionar(); }
+});
+</script>
+
+</body>
+</html>
