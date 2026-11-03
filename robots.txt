@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+# ferramenta interna e arquivo bruto nao entram em busca
+Disallow: /prompter/
+Disallow: /midia/
+
+Sitemap: https://reviloengenharia.com.br/sitemap.xml
