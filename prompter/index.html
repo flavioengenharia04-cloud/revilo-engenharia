@@ -38,7 +38,24 @@ p{margin:0}
 .espaco{flex:1}
 
 .palco{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:26px 20px;text-align:center;min-height:52vh}
+  padding:26px 20px;text-align:center;min-height:52vh;width:100%}
+
+/* rolagem continua: a fita sobe e a guia marca onde ler */
+.rolagem{position:relative;width:100%;max-width:880px;height:min(56vh,440px);overflow:hidden;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 16%,#000 78%,transparent 100%);
+  mask-image:linear-gradient(180deg,transparent 0,#000 16%,#000 78%,transparent 100%)}
+.fita{position:absolute;left:0;right:0;top:0;will-change:transform;padding:0 6px}
+.fita p{font-family:var(--display);font-weight:700;font-size:clamp(25px,4.9vw,50px);line-height:1.32;
+  margin:0 0 .5em;color:var(--fg);opacity:.26;transition:opacity .25s ease;text-wrap:balance}
+.fita p.ativo{opacity:1}
+.fita.espelho{transform-origin:center;}
+.rolagem.espelho .fita p{transform:scaleX(-1)}
+.guia{position:absolute;left:0;right:0;top:34%;height:2px;background:var(--laranja);opacity:.5;
+  pointer-events:none}
+.guia::before,.guia::after{content:"";position:absolute;top:-5px;border:6px solid transparent;
+  border-left-color:var(--laranja)}
+.guia::before{left:0}
+.guia::after{right:0;transform:scaleX(-1)}
 .bloco{font-family:var(--display);font-weight:700;font-size:clamp(27px,5.6vw,58px);line-height:1.22;
   max-width:18ch;text-wrap:balance}
 .bloco.espelho{transform:scaleX(-1)}
@@ -121,8 +138,14 @@ textarea:focus{border-color:var(--laranja)}
   <div class="erro" id="erro" hidden></div>
 
   <div class="palco">
-    <div class="bloco" id="bloco">Mancha que volta toda vez que pinta.</div>
-    <p class="prox" id="prox"><b>a seguir · cena do rejunte</b>Pintaram duas vezes. Voltou as duas.</p>
+    <div class="rolagem" id="rolagem">
+      <div class="fita" id="fita"></div>
+      <div class="guia"></div>
+    </div>
+    <div id="modo-bloco" hidden>
+      <div class="bloco" id="bloco">Mancha que volta toda vez que pinta.</div>
+      <p class="prox" id="prox"><b>a seguir · cena do rejunte</b>Pintaram duas vezes. Voltou as duas.</p>
+    </div>
   </div>
 
   <div class="ritmo">
@@ -137,6 +160,7 @@ textarea:focus{border-color:var(--laranja)}
     <button class="gravar" type="button" id="bt-rec">Gravar e começar</button>
     <button type="button" id="bt-play">Só ensaiar</button>
     <button type="button" id="bt-reset">Reiniciar</button>
+    <button type="button" id="bt-modo" aria-pressed="true">Rolagem</button>
     <button type="button" id="bt-espelho" aria-pressed="false">Espelhar</button>
     <button type="button" id="bt-editar">Editar texto</button>
     <span class="vel">ritmo
@@ -234,6 +258,43 @@ function pintarRoteiro() {
     r.appendChild(d);
   });
 }
+/* ---------- a fita que sobe ---------- */
+var modoRolagem = true, paras = [], tops = [], alvoGuia = 0;
+
+function montarFita() {
+  var fita = $('fita');
+  fita.innerHTML = '';
+  paras = BLOCOS.map(function (b) {
+    var p = document.createElement('p');
+    p.textContent = b.t;
+    fita.appendChild(p);
+    return p;
+  });
+  medirFita();
+}
+function medirFita() {
+  if (!paras.length) return;
+  var cx = $('rolagem');
+  alvoGuia = cx.clientHeight * 0.34;
+  // onde cada bloco precisa estar quando a fala dele comeca: o meio dele na guia
+  tops = paras.map(function (p) { return p.offsetTop + p.offsetHeight / 2; });
+  posicionarFita(0);
+}
+function posicaoNoTempo(tAcum) {
+  // interpola entre o centro do bloco atual e o do proximo, no ritmo do bloco
+  var t = tAcum, k = 0;
+  while (k < BLOCOS.length - 1 && t >= BLOCOS[k].s) { t -= BLOCOS[k].s; k++; }
+  var daqui = tops[k];
+  var proximo = (k + 1 < tops.length) ? tops[k + 1] : daqui + (paras[k] ? paras[k].offsetHeight : 60);
+  var f = Math.min(Math.max(t / BLOCOS[k].s, 0), 1);
+  return daqui + (proximo - daqui) * f;
+}
+function posicionarFita(tAcum) {
+  if (!modoRolagem || !paras.length) return;
+  $('fita').style.transform = 'translateY(' + (alvoGuia - posicaoNoTempo(tAcum)) + 'px)';
+  paras.forEach(function (p, k) { p.classList.toggle('ativo', k === i); });
+}
+
 function mostrar() {
   var b = BLOCOS[i], p = BLOCOS[i + 1];
   elBloco.textContent = b.t;
@@ -241,6 +302,9 @@ function mostrar() {
   $('chip-bloco').textContent = 'bloco ' + (i + 1) + ' de ' + BLOCOS.length;
   $('t-alvo').textContent = num(b.s);
   pintarRoteiro();
+  if (modoRolagem) {
+    paras.forEach(function (p2, k) { p2.classList.toggle('ativo', k === i); });
+  }
 }
 function tique(agora) {
   if (!rodando) return;
@@ -251,6 +315,11 @@ function tique(agora) {
   elBarra.classList.toggle('estourou', tBloco > alvo + 0.4);
   $('t-bloco').textContent = num(tBloco);
   $('t-total').textContent = num(tTotal);
+  if (modoRolagem) {
+    var acum = 0;
+    for (var k = 0; k < i; k++) acum += BLOCOS[k].s;
+    posicionarFita(acum + tBloco);
+  }
   if (tBloco >= alvo) {
     if (i < BLOCOS.length - 1) { i++; tBloco = 0; mostrar(); }
     else { pararTudo(); }
@@ -275,6 +344,11 @@ function pausar() { rodando = false; if (raf) cancelAnimationFrame(raf); btPlay.
 function irPara(k) {
   i = k; tBloco = 0; elBarraI.style.width = '0%';
   elBarra.classList.remove('estourou'); $('t-bloco').textContent = num(0); mostrar();
+  if (modoRolagem) {
+    var acum = 0;
+    for (var j = 0; j < i; j++) acum += BLOCOS[j].s;
+    posicionarFita(acum);
+  }
 }
 function reiniciar() {
   pausar(); i = 0; tBloco = 0; tTotal = 0;
@@ -362,7 +436,17 @@ $('bt-espelho').addEventListener('click', function () {
   espelhado = !espelhado;
   this.setAttribute('aria-pressed', String(espelhado));
   elBloco.classList.toggle('espelho', espelhado);
+  $('rolagem').classList.toggle('espelho', espelhado);
 });
+$('bt-modo').addEventListener('click', function () {
+  modoRolagem = !modoRolagem;
+  this.setAttribute('aria-pressed', String(modoRolagem));
+  this.textContent = modoRolagem ? 'Rolagem' : 'Uma frase';
+  $('rolagem').hidden = !modoRolagem;
+  $('modo-bloco').hidden = modoRolagem;
+  if (modoRolagem) { medirFita(); irPara(i); }
+});
+window.addEventListener('resize', function () { if (modoRolagem) { medirFita(); irPara(i); } });
 $('vel').addEventListener('input', function () {
   vel = parseFloat(this.value);
   $('vel-txt').innerHTML = vel.toFixed(2).replace('.', ',') + '&times;';
@@ -424,12 +508,13 @@ $('bt-salvar').addEventListener('click', function () {
   if (!lista.length) { $('aviso-edit').textContent = 'Ficou sem nenhuma frase. Escreva ao menos uma linha.'; return; }
   var total = lista.reduce(function (a, b) { return a + b.s; }, 0);
   aplicar(lista, 'Salvo: ' + lista.length + ' blocos, ' + num(total) + ' de fala.');
+  montarFita(); irPara(0);
 });
 $('bt-original').addEventListener('click', function () {
   try { localStorage.removeItem(CHAVE); } catch (e) {}
   BLOCOS = ORIGINAL.slice();
   $('txt-edit').value = paraTexto(BLOCOS);
-  pararTudo(); reiniciar();
+  pararTudo(); reiniciar(); montarFita(); irPara(0);
   $('aviso-edit').textContent = 'Voltou ao texto original.';
 });
 
@@ -440,7 +525,13 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'ArrowRight' && i < BLOCOS.length - 1) irPara(i + 1);
   if (e.key === 'ArrowLeft' && i > 0) irPara(i - 1);
 });
+montarFita();
 mostrar();
+irPara(0);
+// as fontes do Google chegam depois do primeiro desenho e mudam a altura das linhas
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(function () { medirFita(); irPara(i); });
+}
 </script>
 </body>
 </html>
