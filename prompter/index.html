@@ -324,7 +324,7 @@ function tique(agora) {
     if (i < BLOCOS.length - 1) { i++; tBloco = 0; mostrar(); }
     else { pararTudo(); }
   }
-  raf = requestAnimationFrame(tique);
+  raf = setTimeout(function () { tique(performance.now()); }, 33);
 }
 function contagem(depois) {
   if (contando) return; contando = true;
@@ -336,11 +336,11 @@ function contagem(depois) {
     clearInterval(iv); contando = false;
     elBloco.className = 'bloco' + (espelhado ? ' espelho' : '');
     elBloco.textContent = gb; elProx.innerHTML = gp;
-    rodando = true; ultimo = performance.now(); raf = requestAnimationFrame(tique);
+    rodando = true; ultimo = performance.now(); raf = setTimeout(function () { tique(performance.now()); }, 33);
     depois && depois();
   }, 1000);
 }
-function pausar() { rodando = false; if (raf) cancelAnimationFrame(raf); btPlay.textContent = 'Continuar'; }
+function pausar() { rodando = false; if (raf) clearTimeout(raf); btPlay.textContent = 'Continuar'; }
 function irPara(k) {
   i = k; tBloco = 0; elBarraI.style.width = '0%';
   elBarra.classList.remove('estourou'); $('t-bloco').textContent = num(0); mostrar();
@@ -371,7 +371,7 @@ function medidor(stream) {
       var pico = 0;
       for (var k = 0; k < dados.length; k++) pico = Math.max(pico, Math.abs(dados[k] - 128) / 128);
       $('vu').style.width = Math.min(pico * 165, 100) + '%';
-      rafVU = requestAnimationFrame(ler);
+      rafVU = setTimeout(ler, 60);
     })();
   } catch (e) { /* medidor e luxo: sem ele a gravacao continua */ }
 }
@@ -423,7 +423,7 @@ function pararTudo() {
   elChipRec.textContent = 'microfone desligado';
   elChipRec.classList.remove('rec');
   btRec.textContent = 'Gravar e começar';
-  if (rafVU) cancelAnimationFrame(rafVU);
+  if (rafVU) clearTimeout(rafVU);
   $('vu').style.width = '0%';
   if (fluxo) { fluxo.getTracks().forEach(function (t) { t.stop(); }); fluxo = null; }
   if (ctxAudio && ctxAudio.close) { try { ctxAudio.close(); } catch (e) {} ctxAudio = null; }
