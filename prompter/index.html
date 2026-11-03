@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Teleprompter Revilo</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#0b1014; --bg-2:#131c23; --surface:#18232b;
+  --line:#2a3b47; --line-forte:#3b5160;
+  --fg:#f2f7fa; --fg-dim:#9bb0bd; --fg-fraco:#6d8392;
+  --laranja:#d9913d; --laranja-claro:#f0b259; --vermelho:#e4483c; --verde:#5fbf8a;
+  --display:"Archivo","Arial Narrow",Helvetica,sans-serif;
+  --corpo:"IBM Plex Sans",-apple-system,Segoe UI,Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--corpo)}
+img{max-width:100%}
+[hidden]{display:none!important}
+h1,h2{font-family:var(--display);margin:0;line-height:1.1;letter-spacing:-.015em}
+p{margin:0}
+.tela{min-height:100%;display:flex;flex-direction:column}
+
+.topo{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);
+  background:var(--bg-2);flex-wrap:wrap}
+.marca{font-family:var(--display);font-weight:800;font-size:14px}
+.marca span{color:var(--laranja)}
+.chip{font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--fg-dim);border:1px solid var(--line-forte);border-radius:999px;padding:4px 10px}
+.chip.rec{color:#fff;border-color:var(--vermelho);background:var(--vermelho)}
+.espaco{flex:1}
+
+.palco{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:26px 20px;text-align:center;min-height:52vh}
+.bloco{font-family:var(--display);font-weight:700;font-size:clamp(27px,5.6vw,58px);line-height:1.22;
+  max-width:18ch;text-wrap:balance}
+.bloco.espelho{transform:scaleX(-1)}
+.contagem{font-family:var(--display);font-weight:800;font-size:clamp(90px,24vw,190px);color:var(--laranja)}
+.prox{margin-top:22px;color:var(--fg-fraco);font-size:clamp(13px,1.9vw,17px);max-width:32ch;min-height:2.6em}
+.prox b{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--laranja);display:block;margin-bottom:4px;font-weight:500}
+
+.ritmo{padding:0 16px 6px}
+.barra{height:6px;background:var(--surface);border:1px solid var(--line);overflow:hidden}
+.barra i{display:block;height:100%;width:0;background:var(--laranja)}
+.barra.estourou i{background:#ff6a2b}
+.nums{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;
+  color:var(--fg-fraco);margin-top:6px;font-variant-numeric:tabular-nums}
+.nums b{color:var(--fg-dim);font-weight:500}
+
+/* medidor de microfone: sem ele a pessoa grava mudo e so descobre no fim */
+.vu{display:flex;align-items:center;gap:9px;padding:10px 16px 0}
+.vu .rot{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--fg-fraco);white-space:nowrap}
+.vu .trilho{flex:1;height:10px;background:var(--surface);border:1px solid var(--line);overflow:hidden}
+.vu .trilho i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--verde),var(--laranja) 72%,var(--vermelho))}
+
+.ctr{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:14px 16px 18px;
+  border-top:1px solid var(--line);background:var(--bg-2)}
+button{font-family:var(--display);font-weight:700;font-size:14px;border-radius:4px;cursor:pointer;
+  border:1px solid var(--line-forte);background:transparent;color:var(--fg);padding:12px 18px}
+button:hover{border-color:var(--laranja);color:var(--laranja-claro)}
+button.forte{background:var(--laranja);border-color:var(--laranja);color:#17110a}
+button.gravar{background:var(--vermelho);border-color:var(--vermelho);color:#fff}
+button.gravar:hover{background:#f05a4e;border-color:#f05a4e;color:#fff}
+button[aria-pressed="true"]{background:var(--surface);border-color:var(--laranja);color:var(--laranja-claro)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.vel{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--fg-dim)}
+input[type=range]{width:106px;accent-color:var(--laranja)}
+
+.resultado{padding:16px;border-top:1px solid var(--line);background:var(--surface)}
+.resultado h2{font-size:16px;margin-bottom:8px}
+.resultado audio{width:100%;margin:10px 0}
+.recado{font-size:13.5px;color:var(--fg-dim)}
+.erro{border-left:2px solid var(--vermelho);background:var(--surface);padding:13px 15px;
+  margin:14px 16px 0;font-size:14px;color:var(--fg-dim)}
+
+.lista{border-top:1px solid var(--line)}
+.lista .cx{max-width:860px;margin-inline:auto;padding:24px 16px 46px}
+.lista h2{font-size:16px;margin-bottom:3px}
+.lista .sub{color:var(--fg-dim);font-size:13.5px;margin-bottom:14px}
+.linha{display:grid;grid-template-columns:44px 1fr 66px;gap:11px;padding:10px;
+  border-bottom:1px solid var(--line);font-size:14.5px;align-items:baseline;cursor:pointer}
+.linha.ativa{background:var(--surface);box-shadow:inset 2px 0 0 var(--laranja)}
+.linha .n{font-family:var(--mono);font-size:10.5px;color:var(--laranja)}
+.linha .t{color:var(--fg-dim)} .linha.ativa .t{color:var(--fg)}
+.linha .s{font-family:var(--mono);font-size:11px;color:var(--fg-fraco);text-align:right;
+  font-variant-numeric:tabular-nums}
+.dica{border-left:2px solid var(--laranja);background:var(--surface);padding:13px 15px;
+  margin-top:22px;font-size:14px;color:var(--fg-dim)}
+.dica b{color:var(--fg);font-family:var(--display)}
+.dica ul{margin:8px 0 0;padding-left:18px} .dica li{margin-bottom:5px}
+textarea{width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--line-forte);
+  border-radius:4px;padding:13px;font-family:var(--corpo);font-size:15px;line-height:1.6;resize:vertical}
+textarea:focus{border-color:var(--laranja)}
+:focus-visible{outline:2px solid var(--laranja);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="tela">
+  <div class="topo">
+    <span class="marca">Revilo<span>.</span> teleprompter</span>
+    <span class="chip" id="chip-bloco">bloco 1 de 9</span>
+    <span class="espaco"></span>
+    <span class="chip" id="chip-rec">microfone desligado</span>
+  </div>
+
+  <div class="vu">
+    <span class="rot">microfone</span>
+    <div class="trilho"><i id="vu"></i></div>
+  </div>
+
+  <div class="erro" id="erro" hidden></div>
+
+  <div class="palco">
+    <div class="bloco" id="bloco">Mancha que volta toda vez que pinta.</div>
+    <p class="prox" id="prox"><b>a seguir · cena do rejunte</b>Pintaram duas vezes. Voltou as duas.</p>
+  </div>
+
+  <div class="ritmo">
+    <div class="barra" id="barra"><i></i></div>
+    <div class="nums">
+      <span>bloco <b id="t-bloco">0,0 s</b> de <b id="t-alvo">2,7 s</b></span>
+      <span>gravando há <b id="t-total">0,0 s</b></span>
+    </div>
+  </div>
+
+  <div class="ctr">
+    <button class="gravar" type="button" id="bt-rec">Gravar e começar</button>
+    <button type="button" id="bt-play">Só ensaiar</button>
+    <button type="button" id="bt-reset">Reiniciar</button>
+    <button type="button" id="bt-espelho" aria-pressed="false">Espelhar</button>
+    <span class="vel">ritmo
+      <input type="range" id="vel" min="0.7" max="1.4" step="0.05" value="1">
+      <span id="vel-txt">1,00&times;</span>
+    </span>
+  </div>
+
+  <div class="resultado" id="resultado" hidden>
+    <h2>Gravação pronta</h2>
+    <audio id="player" controls preload="metadata"></audio>
+    <p><button class="forte" type="button" id="bt-baixar">Baixar o áudio</button>
+       <button type="button" id="bt-outra">Gravar de novo</button></p>
+    <p class="recado">Ouve antes de mandar. Se tiver eco, troque de cômodo e grave de novo:
+      eco é a única coisa que não dá para tirar depois.</p>
+  </div>
+
+  <div class="lista">
+    <div class="cx">
+      <h2>Roteiro inteiro</h2>
+      <p class="sub">Toque numa linha para ir direto para ela. Os tempos são referência, não
+        camisa de força.</p>
+      <div id="roteiro"></div>
+
+      <p style="margin-top:14px">
+        <button type="button" id="bt-editar">Editar o texto</button>
+      </p>
+
+      <div id="editor" hidden>
+        <p class="sub" style="margin:14px 0 8px">Uma frase por linha. Para mandar no tempo, escreva
+          os segundos, uma barra vertical e a frase. Sem os segundos, eu calculo pelo tamanho.</p>
+        <textarea id="txt-edit" spellcheck="true" rows="12"></textarea>
+        <p style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="forte" type="button" id="bt-salvar">Salvar</button>
+          <button type="button" id="bt-cancelar">Cancelar</button>
+          <button type="button" id="bt-original">Voltar ao texto original</button>
+        </p>
+        <p class="sub" id="aviso-edit" style="margin-top:8px"></p>
+      </div>
+      <div class="dica">
+        <b>Antes de apertar o vermelho</b>
+        <ul>
+          <li><b>Quarto com cama, cortina e guarda-roupa aberto.</b> Pano come o eco. Cozinha e
+            banheiro são os piores lugares.</li>
+          <li><b>Celular a um palmo da boca</b>, um pouco de lado. De frente estoura o P e o B.</li>
+          <li><b>Olha o medidor aí em cima.</b> Falando normal ele tem que chegar no meio. Se ficar
+            no começo, aproxime; se bater no vermelho, afaste.</li>
+          <li><b>Grave tudo de uma vez.</b> Errou? Espera dois segundos em silêncio e repete a
+            frase inteira. Eu corto depois.</li>
+          <li><b>Fale afirmando.</b> Você está explicando o que encontrou, não narrando uma
+            tragédia.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var ORIGINAL = [
+  { t: "Mancha que volta toda vez que pinta.", s: 2.7, c: "cena da mancha" },
+  { t: "Pintaram duas vezes. Voltou as duas.", s: 3.1, c: "cena do rejunte" },
+  { t: "A câmera térmica mostra por onde a água corre, antes de quebrar qualquer coisa.", s: 5.2, c: "cena do termograma" },
+  { t: "Por isso a abertura foi só essa. No ponto que o laudo apontou.", s: 3.9, c: "cena da parede aberta" },
+  { t: "A tubulação estava exatamente ali.", s: 2.9, c: "cena da tubulação" },
+  { t: "E se a água chega no aço, vira problema estrutural.", s: 3.5, c: "cena da armadura" },
+  { t: "Aí não é mais pintura.", s: 1.7, c: "close da armadura" },
+  { t: "Revilo Engenharia.", s: 1.4, c: "fechamento" },
+  { t: "Vistoria, perícia e laudo com ART.", s: 3.6, c: "fechamento" }
+];
+
+var CHAVE = 'revilo-prompter-roteiro';
+var BLOCOS = ORIGINAL.slice();
+try {
+  var guardado = localStorage.getItem(CHAVE);
+  if (guardado) {
+    var lido = JSON.parse(guardado);
+    if (Array.isArray(lido) && lido.length) BLOCOS = lido;
+  }
+} catch (e) { /* aba anonima ou armazenamento bloqueado: segue com o original */ }
+
+var i = 0, rodando = false, tBloco = 0, tTotal = 0, vel = 1, ultimo = 0, raf = null, contando = false;
+var espelhado = false, gravando = false, rec = null, pedacos = [], fluxo = null, ctxAudio = null, rafVU = null, blobFinal = null, tipoFinal = "audio/webm";
+
+var $ = function (id) { return document.getElementById(id); };
+var elBloco = $('bloco'), elProx = $('prox'), elBarra = $('barra'), elBarraI = elBarra.querySelector('i');
+var btRec = $('bt-rec'), btPlay = $('bt-play'), elErro = $('erro'), elChipRec = $('chip-rec');
+
+function num(n) { return n.toFixed(1).replace('.', ',') + ' s'; }
+function erro(m) { elErro.textContent = m; elErro.hidden = false; }
+
+function pintarRoteiro() {
+  var r = $('roteiro'); r.innerHTML = '';
+  BLOCOS.forEach(function (b, k) {
+    var d = document.createElement('div');
+    d.className = 'linha' + (k === i ? ' ativa' : '');
+    d.innerHTML = '<span class="n">' + String(k + 1).padStart(2, '0') + '</span><span class="t">' +
+      b.t + '</span><span class="s">' + num(b.s) + '</span>';
+    d.addEventListener('click', function () { irPara(k); });
+    r.appendChild(d);
+  });
+}
+function mostrar() {
+  var b = BLOCOS[i], p = BLOCOS[i + 1];
+  elBloco.textContent = b.t;
+  elProx.innerHTML = p ? '<b>a seguir · ' + p.c + '</b>' + p.t : '<b>fim</b>Pode parar a gravação.';
+  $('chip-bloco').textContent = 'bloco ' + (i + 1) + ' de ' + BLOCOS.length;
+  $('t-alvo').textContent = num(b.s);
+  pintarRoteiro();
+}
+function tique(agora) {
+  if (!rodando) return;
+  var dt = (agora - ultimo) / 1000; ultimo = agora;
+  tBloco += dt * vel; tTotal += dt * vel;
+  var alvo = BLOCOS[i].s;
+  elBarraI.style.width = Math.min(tBloco / alvo, 1) * 100 + '%';
+  elBarra.classList.toggle('estourou', tBloco > alvo + 0.4);
+  $('t-bloco').textContent = num(tBloco);
+  $('t-total').textContent = num(tTotal);
+  if (tBloco >= alvo) {
+    if (i < BLOCOS.length - 1) { i++; tBloco = 0; mostrar(); }
+    else { pararTudo(); }
+  }
+  raf = requestAnimationFrame(tique);
+}
+function contagem(depois) {
+  if (contando) return; contando = true;
+  var n = 3, gb = elBloco.textContent, gp = elProx.innerHTML;
+  elBloco.className = 'contagem'; elProx.textContent = ''; elBloco.textContent = n;
+  var iv = setInterval(function () {
+    n--;
+    if (n > 0) { elBloco.textContent = n; return; }
+    clearInterval(iv); contando = false;
+    elBloco.className = 'bloco' + (espelhado ? ' espelho' : '');
+    elBloco.textContent = gb; elProx.innerHTML = gp;
+    rodando = true; ultimo = performance.now(); raf = requestAnimationFrame(tique);
+    depois && depois();
+  }, 1000);
+}
+function pausar() { rodando = false; if (raf) cancelAnimationFrame(raf); btPlay.textContent = 'Continuar'; }
+function irPara(k) {
+  i = k; tBloco = 0; elBarraI.style.width = '0%';
+  elBarra.classList.remove('estourou'); $('t-bloco').textContent = num(0); mostrar();
+}
+function reiniciar() {
+  pausar(); i = 0; tBloco = 0; tTotal = 0;
+  elBarraI.style.width = '0%'; $('t-bloco').textContent = num(0); $('t-total').textContent = num(0);
+  btPlay.textContent = 'Só ensaiar'; mostrar();
+}
+
+/* ---------- microfone ---------- */
+function medidor(stream) {
+  try {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    ctxAudio = new AC();
+    var src = ctxAudio.createMediaStreamSource(stream);
+    var an = ctxAudio.createAnalyser(); an.fftSize = 512;
+    src.connect(an);
+    var dados = new Uint8Array(an.frequencyBinCount);
+    (function ler() {
+      an.getByteTimeDomainData(dados);
+      var pico = 0;
+      for (var k = 0; k < dados.length; k++) pico = Math.max(pico, Math.abs(dados[k] - 128) / 128);
+      $('vu').style.width = Math.min(pico * 165, 100) + '%';
+      rafVU = requestAnimationFrame(ler);
+    })();
+  } catch (e) { /* medidor e luxo: sem ele a gravacao continua */ }
+}
+function escolherTipo() {
+  if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
+  var opcoes = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/aac', 'audio/ogg'];
+  for (var k = 0; k < opcoes.length; k++) if (MediaRecorder.isTypeSupported(opcoes[k])) return opcoes[k];
+  return '';
+}
+async function gravar() {
+  elErro.hidden = true;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
+    erro('Este navegador não grava áudio. Abra em outro navegador, ou grave no app de gravador do celular lendo o texto daqui.');
+    return;
+  }
+  try {
+    fluxo = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: false, noiseSuppression: true, autoGainControl: false, channelCount: 1 }
+    });
+  } catch (e) {
+    erro('Não consegui ligar o microfone. Se o navegador perguntou, toque em Permitir; se já negou antes, abra o cadeado ao lado do endereço e libere o microfone para este site.');
+    return;
+  }
+  medidor(fluxo);
+  var tipo = escolherTipo();
+  tipoFinal = tipo || 'audio/webm';
+  try { rec = tipo ? new MediaRecorder(fluxo, { mimeType: tipo, audioBitsPerSecond: 192000 }) : new MediaRecorder(fluxo); }
+  catch (e) { rec = new MediaRecorder(fluxo); }
+  pedacos = [];
+  rec.ondataavailable = function (ev) { if (ev.data && ev.data.size) pedacos.push(ev.data); };
+  rec.onstop = function () {
+    blobFinal = new Blob(pedacos, { type: rec.mimeType || tipoFinal });
+    $('player').src = URL.createObjectURL(blobFinal);
+    $('resultado').hidden = false;
+    $('resultado').scrollIntoView({ block: 'center' });
+  };
+  rec.start();
+  gravando = true;
+  elChipRec.textContent = 'gravando';
+  elChipRec.classList.add('rec');
+  btRec.textContent = 'Parar gravação';
+  reiniciar();
+  contagem();
+}
+function pararTudo() {
+  pausar();
+  if (gravando && rec && rec.state !== 'inactive') rec.stop();
+  gravando = false;
+  elChipRec.textContent = 'microfone desligado';
+  elChipRec.classList.remove('rec');
+  btRec.textContent = 'Gravar e começar';
+  if (rafVU) cancelAnimationFrame(rafVU);
+  $('vu').style.width = '0%';
+  if (fluxo) { fluxo.getTracks().forEach(function (t) { t.stop(); }); fluxo = null; }
+  if (ctxAudio && ctxAudio.close) { try { ctxAudio.close(); } catch (e) {} ctxAudio = null; }
+}
+
+btRec.addEventListener('click', function () { gravando ? pararTudo() : gravar(); });
+btPlay.addEventListener('click', function () { rodando ? pausar() : contagem(); });
+$('bt-reset').addEventListener('click', reiniciar);
+$('bt-espelho').addEventListener('click', function () {
+  espelhado = !espelhado;
+  this.setAttribute('aria-pressed', String(espelhado));
+  elBloco.classList.toggle('espelho', espelhado);
+});
+$('vel').addEventListener('input', function () {
+  vel = parseFloat(this.value);
+  $('vel-txt').innerHTML = vel.toFixed(2).replace('.', ',') + '&times;';
+});
+$('bt-outra').addEventListener('click', function () { $('resultado').hidden = true; gravar(); });
+$('bt-baixar').addEventListener('click', function () {
+  if (!blobFinal) return;
+  var ext = (blobFinal.type.indexOf('mp4') >= 0 || blobFinal.type.indexOf('aac') >= 0) ? 'm4a'
+          : (blobFinal.type.indexOf('ogg') >= 0 ? 'ogg' : 'webm');
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blobFinal);
+  a.download = 'narracao-revilo.' + ext;
+  document.body.appendChild(a); a.click();
+  setTimeout(function () { document.body.removeChild(a); }, 1500);
+});
+/* ---------- editar o roteiro ---------- */
+function paraTexto(lista) {
+  return lista.map(function (b) {
+    return b.s.toFixed(1).replace('.', ',') + ' | ' + b.t;
+  }).join('\n');
+}
+function deTexto(txt) {
+  var fora = [];
+  txt.split('\n').forEach(function (linha) {
+    var l = linha.trim();
+    if (!l) return;
+    var s = null, t = l;
+    var corte = l.indexOf('|');
+    if (corte > 0) {
+      var n = parseFloat(l.slice(0, corte).trim().replace(',', '.'));
+      if (!isNaN(n) && n > 0) { s = n; t = l.slice(corte + 1).trim(); }
+    }
+    if (!t) return;
+    // sem tempo informado: 2,6 palavras por segundo, que e o ritmo de locucao
+    if (s === null) s = Math.max(1.0, Math.round((t.split(/\s+/).length / 2.6) * 10) / 10);
+    fora.push({ t: t, s: s, c: '' });
+  });
+  return fora;
+}
+function abrirEditor() {
+  $('txt-edit').value = paraTexto(BLOCOS);
+  $('editor').hidden = false;
+  $('aviso-edit').textContent = '';
+  $('txt-edit').focus();
+}
+function aplicar(lista, recado) {
+  BLOCOS = lista;
+  try { localStorage.setItem(CHAVE, JSON.stringify(BLOCOS)); }
+  catch (e) { recado += ' Não consegui guardar no aparelho, então vale só nesta aba.'; }
+  pararTudo(); reiniciar();
+  $('aviso-edit').textContent = recado;
+}
+$('bt-editar').addEventListener('click', abrirEditor);
+$('bt-cancelar').addEventListener('click', function () { $('editor').hidden = true; });
+$('bt-salvar').addEventListener('click', function () {
+  var lista = deTexto($('txt-edit').value);
+  if (!lista.length) { $('aviso-edit').textContent = 'Ficou sem nenhuma frase. Escreva ao menos uma linha.'; return; }
+  var total = lista.reduce(function (a, b) { return a + b.s; }, 0);
+  aplicar(lista, 'Salvo: ' + lista.length + ' blocos, ' + num(total) + ' de fala.');
+});
+$('bt-original').addEventListener('click', function () {
+  try { localStorage.removeItem(CHAVE); } catch (e) {}
+  BLOCOS = ORIGINAL.slice();
+  $('txt-edit').value = paraTexto(BLOCOS);
+  pararTudo(); reiniciar();
+  $('aviso-edit').textContent = 'Voltou ao texto original.';
+});
+
+document.addEventListener('keydown', function (e) {
+  var alvo = e.target.tagName;
+  if (alvo === 'INPUT' || alvo === 'TEXTAREA') return;
+  if (e.code === 'Space') { e.preventDefault(); rodando ? pausar() : contagem(); }
+  if (e.key === 'ArrowRight' && i < BLOCOS.length - 1) irPara(i + 1);
+  if (e.key === 'ArrowLeft' && i > 0) irPara(i - 1);
+});
+mostrar();
+</script>
+</body>
+</html>
