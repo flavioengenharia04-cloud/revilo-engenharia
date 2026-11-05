@@ -350,6 +350,13 @@ function irPara(k) {
     posicionarFita(acum);
   }
 }
+function recolocar() {
+  // devolve a fita ao instante atual da leitura, sem zerar o bloco em andamento
+  if (!modoRolagem || !paras.length) return;
+  var acum = 0;
+  for (var j = 0; j < i; j++) acum += BLOCOS[j].s;
+  posicionarFita(acum + tBloco);
+}
 function reiniciar() {
   pausar(); i = 0; tBloco = 0; tTotal = 0;
   elBarraI.style.width = '0%'; $('t-bloco').textContent = num(0); $('t-total').textContent = num(0);
@@ -444,9 +451,17 @@ $('bt-modo').addEventListener('click', function () {
   this.textContent = modoRolagem ? 'Rolagem' : 'Uma frase';
   $('rolagem').hidden = !modoRolagem;
   $('modo-bloco').hidden = modoRolagem;
-  if (modoRolagem) { medirFita(); irPara(i); }
+  if (modoRolagem) { medirFita(); recolocar(); }
 });
-window.addEventListener('resize', function () { if (modoRolagem) { medirFita(); irPara(i); } });
+var remedir = null;
+function aoRedimensionar() {
+  if (!modoRolagem) return;
+  clearTimeout(remedir);
+  remedir = setTimeout(function () { medirFita(); recolocar(); }, 120);
+}
+window.addEventListener('resize', aoRedimensionar);
+window.addEventListener('orientationchange', aoRedimensionar);
+if (window.visualViewport) window.visualViewport.addEventListener('resize', aoRedimensionar);
 $('vel').addEventListener('input', function () {
   vel = parseFloat(this.value);
   $('vel-txt').innerHTML = vel.toFixed(2).replace('.', ',') + '&times;';
